@@ -6,14 +6,14 @@ class Background {
     this.height = height;
   }
   
-  update() {
-    this.x+=0.25;
-    if(this.x >= this.width) {
-      this.x = -this.width;
+  update(ctx) {
+    if(player)this.x += 0.25;
+    if(this.x >= backsCount * this.width - this.width) {
+      this.x -= backsCount * this.width;
     }
   }
 
   draw(ctx) {
-    ctx.drawImage(background, this.x, this.y, this.width, this.height);
+    ctx.drawImage(background, Math.round(this.x), this.y, this.width, this.height);
   }
 }

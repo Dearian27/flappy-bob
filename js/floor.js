@@ -6,11 +6,10 @@ class Floor {
     this.height = height;
   }
   
-  update() {
-    this.x-=1;
-    
-    if(this.x <= -500) {
-      this.x = 500;
+  update(ctx) {
+    if(player) this.x-=2;
+    if(this.x <= -this.width) {
+      this.x = (floorsCount-1) * 500;
     }
   }
 

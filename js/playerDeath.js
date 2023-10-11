@@ -4,14 +4,15 @@ class PlayerDeath {
     this.y = y;
     this.width = width;
     this.height = height;
-    this.rotationSpeed = Math.floor(Math.random() * 10);
+    this.rotationSpeed = Math.floor(Math.random() * 5 + 5);
     this.angle = rotation;
     this.velocity = {
-      x: 0,
+      x: 1,
       y: velocityY
     }
   }
   draw() {
+    this.x += this.velocity.x;
     this.velocity.y += 0.5
     this.y += this.velocity.y;
     this.angle += this.rotationSpeed;
