@@ -67,7 +67,8 @@ for(let i = 0; i < floorsCount; i++) {
 }
 
 
-let progress = new Sentence(`${currentQuestion+1}/${questions.length}`, 0, 30, 'right');
+let progress = new Sentence(`${currentQuestion+1}/${questions.length}`, 0, canvas.height-30, 'right', window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12);
+let sentence = new Sentence(questions[currentQuestion].question, canvas.width/2, 25, 'center', window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12)
 
 const init = () => {
   gameStop = false;
@@ -75,8 +76,8 @@ const init = () => {
   player = new Player(0 + canvas.width/3, canvas.height/2-100, 47, 41, ctx);
   playerDeath = null;
   shuffle();
-  sentence = new Sentence(questions[currentQuestion].question, canvas.width/2, 30);
-  progress = new Sentence(`${currentQuestion+1}/${questions.length}`, 0, 30, 'right');
+  sentence = new Sentence(questions[currentQuestion].question, canvas.width/2, 30, 'center', window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12);
+  progress = new Sentence(`${currentQuestion+1}/${questions.length}`, 0, canvas.height - 25, 'right', window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12);
   floors = [];
   backgrounds = [];
   for(let i = 1; i <= backsCount; i++) {
@@ -95,6 +96,7 @@ const init = () => {
     }
     if(player?.alive && !gameStop)wordSpawn();
   }, 1500);
+  console.log(backgrounds, floors, words);
 }
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -188,7 +190,6 @@ let spawnerTimer = setInterval(() => {
   if(player?.alive)wordSpawn();
 }, 1500)
 
-let sentence = new Sentence(questions[currentQuestion].question, canvas.width/2, 30)
 
 const animate = () => {
   if(!gameStop) {
