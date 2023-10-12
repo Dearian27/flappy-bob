@@ -46,7 +46,7 @@ let questions = [
     question: 'Sam isn\'t ___ English at the moment.',
     answer: 'Sam isn\'t learning English at the moment.',
     variants: [
-      {isRight: true, text: 'learing'},
+      {isRight: true, text: 'learning'},
       {isRight: false, text: 'learns'},
     ]
   },
@@ -67,9 +67,6 @@ for(let i = 0; i < floorsCount; i++) {
 }
 
 
-let progress = new Sentence(`${currentQuestion+1}/${questions.length}`, 0, canvas.height-30, 'right', window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12);
-let sentence = new Sentence(questions[currentQuestion].question, canvas.width/2, 25, 'center', window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12)
-
 const init = () => {
   gameStop = false;
   currentQuestion = 0;
@@ -77,7 +74,7 @@ const init = () => {
   playerDeath = null;
   shuffle();
   sentence = new Sentence(questions[currentQuestion].question, canvas.width/2, 30, 'center', window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12);
-  progress = new Sentence(`${currentQuestion+1}/${questions.length}`, 0, canvas.height - 25, 'right', window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12);
+  progress = new Progress(`${currentQuestion+1}/${questions.length}`, canvas.width/2, canvas.height/2, window.innerWidth > 670 ? 120 : 80, window.innerWidth > 670 ? 84 : 50);
   floors = [];
   backgrounds = [];
   for(let i = 1; i <= backsCount; i++) {
@@ -112,6 +109,9 @@ const shuffle = () => {
   });
 }
 shuffle();
+
+let progress = new Progress(`${currentQuestion+1}/${questions.length}`, canvas.width/2, canvas.height/2, window.innerWidth > 670 ? 120 : 80, window.innerWidth > 670 ? 84 : 50);
+let sentence = new Sentence(questions[currentQuestion].question, canvas.width/2, 25, 'center', window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12)
 
 
 
@@ -218,13 +218,14 @@ const animate = () => {
       words = [];
       }, 1100)
     }
+    sentence.draw(ctx);
+    progress.draw(ctx);
     
     words.forEach(word => {
       word.draw(ctx);
     })
     
-    sentence.draw(ctx);
-    progress.draw(ctx);
+   
     
     colliderCheck();
   }
