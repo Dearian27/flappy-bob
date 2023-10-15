@@ -152,28 +152,31 @@ const colliderCheck = () => {
       }
 
     })
-    if(player?.y - player?.height/2 <= 0 && !player?.moveBlock) {
-      playAudio(audios.hit);
-      if(!playerDeath) {
-        playerDeath = new PlayerDeath(player.x, player.y, player.width, player.height, 0, player.rotation);
-        player = null;
-        setTimeout(() => {
-          init();
-        }, 2000)
-      }
-      return;
+    if(player?.y - player?.height/2 <= 0) {
+      // playAudio(audios.hit);
+      // if(!playerDeath) {
+      //   playerDeath = new PlayerDeath(player.x, player.y, player.width, player.height, 0, player.rotation);
+      //   player = null;
+      //   setTimeout(() => {
+      //     init();
+      //   }, 2000)
+      // }
+      // return;
+      player.y = 0 + player.height/2;
     }
     floors.forEach(floor => {
-      if(player?.y+player?.height/2 > floor.y && player?.alive) {
-        playAudio(audios.hit);
-        if(!playerDeath) {
-          playerDeath = new PlayerDeath(player.x, floor.y - player.height/2, player.width, player.height, -7, player.rotation);
-          player = null;
-          setTimeout(() => {
-            init();
-          }, 2000)
-          return;
-        }
+      if(player?.y+player?.height/2 > floor.y-30 && player?.alive) {
+        // playAudio(audios.hit);
+        // if(!playerDeath) {
+        //   playerDeath = new PlayerDeath(player.x, floor.y - player.height/2, player.width, player.height, -7, player.rotation);
+        //   player = null;
+        //   setTimeout(() => {
+        //     init();
+        //   }, 2000)
+        //   return;
+        // }
+        player.controls.flap = true;
+        player.y = floor.y-30-player.height/2;
       }
     });
   }
@@ -181,7 +184,7 @@ const colliderCheck = () => {
 
 const wordSpawn = () => {
     const text = questions[currentQuestion].variants[Math.floor(Math.random() * questions[currentQuestion].variants.length)].text;
-    words.push( new Word(1, canvas.width/2+200, (canvas.height-76)/2 - 25 + (Math.random() * 400 - 200), 100, 50, text, 20, 'black', 'white', 10));
+    words.push( new Word(1, canvas.width/2+200, (canvas.height-76)/2 - 25 + (Math.random() * 380 - 210), 100, 50, text, 20, 'black', 'white', 10));
 }
 let spawnerTimer = setInterval(() => {
   if(words.length > 15) {
