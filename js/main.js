@@ -5,7 +5,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight; // Максимальна можлива висота
 const animateElement = document.getElementById("startAnimation"); // Замініть на ваш ID анімації
 
-let gameStop = false;
+let gameIsStarted = false;
 let currentQuestion = 0;
 let questions = [];
 // let questions = [
@@ -86,7 +86,8 @@ const startGame = (data) => {
 };
 
 const init = () => {
-  gameStop = false;
+  animate();
+  gameIsStarted = true;
   currentQuestion = 0;
   player = new Player(
     0 + canvas.width / 3,
@@ -134,7 +135,7 @@ const init = () => {
     if (words.length > 15) {
       words.shift();
     }
-    if (player?.alive && !gameStop) wordSpawn();
+    if (player?.alive && gameIsStarted) wordSpawn();
   }, 1500);
   console.log(backgrounds, floors, words);
 };
@@ -191,7 +192,7 @@ const colliderCheck = () => {
             currentQuestion++;
             progress.text = `${currentQuestion + 1}/${questions.length}`;
           } else {
-            gameStop = true;
+            gameIsStarted = false;
             openModal();
           }
           setTimeout(() => {
@@ -276,45 +277,45 @@ let spawnerTimer = setInterval(() => {
 }, 1500);
 
 const animate = () => {
-  if (!gameStop) {
-    canvas.height = window.innerHeight;
-
-    backgrounds.forEach((back) => {
-      back.update(ctx);
-      back.draw(ctx);
-    });
-    floors.forEach((floor) => {
-      floor.update(ctx);
-      floor.draw(ctx);
-    });
-
-    if (player) {
-      player.update();
-      player.draw(ctx);
-    } else {
-      playerDeath.draw(ctx);
-    }
-    if (!player) {
-      words.forEach((word) => {
-        word.anim = "fadeOut";
-      });
-      setTimeout(() => {
-        words = [];
-      }, 1100);
-    }
-    sentence.draw(ctx);
-    progress.draw(ctx);
-
-    words.forEach((word) => {
-      word.draw(ctx);
-    });
-
-    colliderCheck();
+  if (gameIsStarted) {
+    return;
   }
+  canvas.height = window.innerHeight;
+
+  backgrounds.forEach((back) => {
+    back.update(ctx);
+    back.draw(ctx);
+  });
+  floors.forEach((floor) => {
+    floor.update(ctx);
+    floor.draw(ctx);
+  });
+
+  if (player) {
+    player.update();
+    player.draw(ctx);
+  } else {
+    playerDeath.draw(ctx);
+  }
+  if (!player) {
+    words.forEach((word) => {
+      word.anim = "fadeOut";
+    });
+    setTimeout(() => {
+      words = [];
+    }, 1100);
+  }
+  sentence.draw(ctx);
+  progress.draw(ctx);
+
+  words.forEach((word) => {
+    word.draw(ctx);
+  });
+
+  colliderCheck();
+
   requestAnimationFrame(animate);
 };
-
-animate();
 
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
