@@ -103,7 +103,7 @@ const colliderCheck = () => {
           } else {
             gameIsStarted = false;
             window.top.postMessage({ status: "success" }, "*");
-            openModal();
+            // openModal();
           }
           setTimeout(() => {
             sentence.text = questions[currentQuestion].question;
