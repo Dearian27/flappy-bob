@@ -4,10 +4,7 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight; // Максимальна можлива висота
 const animateElement = document.getElementById("startAnimation"); // Замініть на ваш ID анімації
-
-let gameIsStarted = false;
 let currentQuestion = 0;
-let questions = [];
 // let questions = [
 //   {
 //     question: "She ___ cooking now.",
@@ -64,95 +61,13 @@ let floors = [];
 let backgrounds = [];
 let words = [];
 
-const backsCount = Math.ceil(canvas.width / canvas.height) + 1;
-for (let i = 1; i <= backsCount; i++) {
-  backgrounds.push(
-    new Background(
-      canvas.width - canvas.height * i,
-      0,
-      canvas.height,
-      canvas.height
-    )
-  );
-}
-const floorsCount = Math.ceil(canvas.width / 500) + 1;
-for (let i = 0; i < floorsCount; i++) {
-  floors.push(new Floor(0 + 500 * i, canvas.height - 76, 500, 76));
-}
-
-const startGame = (data) => {
-  questions = data;
-  init();
-};
-
-const init = () => {
-  animate();
-  gameIsStarted = true;
-  currentQuestion = 0;
-  player = new Player(
-    0 + canvas.width / 3,
-    canvas.height / 2 - 100,
-    47,
-    41,
-    ctx
-  );
-  playerDeath = null;
-  shuffle();
-  sentence = new Sentence(
-    questions[currentQuestion].question,
-    canvas.width / 2,
-    30,
-    "center",
-    window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12
-  );
-  progress = new Progress(
-    `${currentQuestion + 1}/${questions.length}`,
-    canvas.width / 2,
-    canvas.height / 2,
-    window.innerWidth > 670 ? 120 : 80,
-    window.innerWidth > 670 ? 84 : 50
-  );
-  floors = [];
-  backgrounds = [];
-  for (let i = 1; i <= backsCount; i++) {
-    backgrounds.push(
-      new Background(
-        canvas.width - canvas.height * i,
-        0,
-        canvas.height,
-        canvas.height
-      )
-    );
-  }
-  for (let i = 0; i < floorsCount; i++) {
-    floors.push(new Floor(0 + 500 * i, canvas.height - 76, 500, 76));
-  }
-
-  clearInterval(spawnerTimer);
-  words = [];
-
-  spawnerTimer = setInterval(() => {
-    if (words.length > 15) {
-      words.shift();
-    }
-    if (player?.alive && gameIsStarted) wordSpawn();
-  }, 1500);
-  console.log(backgrounds, floors, words);
-};
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
 const shuffle = () => {
   questions = shuffleArray(questions);
   questions.forEach((question) => {
     question.variants = shuffleArray(question.variants);
   });
 };
-shuffle();
+// shuffle();
 
 let progress = new Progress(
   `${currentQuestion + 1}/${questions.length}`,
@@ -161,13 +76,7 @@ let progress = new Progress(
   window.innerWidth > 670 ? 120 : 80,
   window.innerWidth > 670 ? 84 : 50
 );
-let sentence = new Sentence(
-  questions[currentQuestion].question,
-  canvas.width / 2,
-  25,
-  "center",
-  window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12
-);
+let sentence;
 
 const colliderCheck = () => {
   if (player) {
@@ -193,6 +102,7 @@ const colliderCheck = () => {
             progress.text = `${currentQuestion + 1}/${questions.length}`;
           } else {
             gameIsStarted = false;
+            window.top.postMessage({ status: "success" }, "*");
             openModal();
           }
           setTimeout(() => {
@@ -277,7 +187,7 @@ let spawnerTimer = setInterval(() => {
 }, 1500);
 
 const animate = () => {
-  if (gameIsStarted) {
+  if (!gameIsStarted) {
     return;
   }
   canvas.height = window.innerHeight;
@@ -305,7 +215,7 @@ const animate = () => {
       words = [];
     }, 1100);
   }
-  sentence.draw(ctx);
+  sentence?.draw(ctx);
   progress.draw(ctx);
 
   words.forEach((word) => {
@@ -317,6 +227,88 @@ const animate = () => {
   requestAnimationFrame(animate);
 };
 
+const init = () => {
+  gameIsStarted = true;
+  currentQuestion = 0;
+  player = new Player(
+    0 + canvas.width / 3,
+    canvas.height / 2 - 100,
+    47,
+    41,
+    ctx
+  );
+  playerDeath = null;
+  shuffle();
+  sentence = new Sentence(
+    questions[currentQuestion].question,
+    canvas.width / 2,
+    30,
+    "center",
+    window.innerWidth > 670 ? 20 : window.innerWidth > 480 ? 16 : 12
+  );
+  progress = new Progress(
+    `${currentQuestion + 1}/${questions.length}`,
+    canvas.width / 2,
+    canvas.height / 2,
+    window.innerWidth > 670 ? 120 : 80,
+    window.innerWidth > 670 ? 84 : 50
+  );
+  floors = [];
+  backgrounds = [];
+  for (let i = 1; i <= backsCount; i++) {
+    backgrounds.push(
+      new Background(
+        canvas.width - canvas.height * i,
+        0,
+        canvas.height,
+        canvas.height
+      )
+    );
+  }
+  for (let i = 0; i < floorsCount; i++) {
+    floors.push(new Floor(0 + 500 * i, canvas.height - 76, 500, 76));
+  }
+  clearInterval(spawnerTimer);
+  words = [];
+  animate();
+
+  spawnerTimer = setInterval(() => {
+    if (words.length > 15) {
+      words.shift();
+    }
+    if (player?.alive && gameIsStarted) wordSpawn();
+  }, 1500);
+  // console.log(backgrounds, floors, words);
+};
+
+const startGame = (data) => {
+  questions = data;
+  init();
+};
+
+const backsCount = Math.ceil(canvas.width / canvas.height) + 1;
+for (let i = 1; i <= backsCount; i++) {
+  backgrounds.push(
+    new Background(
+      canvas.width - canvas.height * i,
+      0,
+      canvas.height,
+      canvas.height
+    )
+  );
+}
+const floorsCount = Math.ceil(canvas.width / 500) + 1;
+for (let i = 0; i < floorsCount; i++) {
+  floors.push(new Floor(0 + 500 * i, canvas.height - 76, 500, 76));
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;

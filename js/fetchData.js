@@ -7,10 +7,13 @@ function shuffleArray(array) {
 }
 
 window.addEventListener("message", (e) => {
-  console.log(event.origin, "solution-school.com.ua");
-  console.log(event.origin.includes("solution-school.com.ua"));
+  // console.log(window.origin);
+  // console.log(event.origin, "solution-school.com.ua");
+  // console.log(event.origin.includes("solution-school.com.ua"));
   if (
     event.origin !== "https://www.solution-school.com.ua"
+    // &&
+    // event.origin !== "http://localhost:3000"
     // event.origin !== "https://solution-english-school.vercel.app" ||
     // !event.origin.includes("solution-school.com.ua")
   ) {
@@ -19,6 +22,7 @@ window.addEventListener("message", (e) => {
   if (!gameIsStarted) {
     gameIsStarted = true;
     let data = e.data;
+    console.log(data);
     data = data.map((question) => {
       let rightVariant = question.variants.find(
         (variant) => variant.isRight === true
